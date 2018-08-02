@@ -3,7 +3,7 @@ const path = require('path');
 // const configEmitter = require('wix-config-emitter');
 // const rpcTestkit = require('wix-rpc-testkit');
 const NodeEnvironment = require('jest-environment-node');
-// const project = require('yoshi/config/project');
+const project = require('yoshi/config/project');
 const {
   // PORT,
   // MANAGEMENT_PORT,
@@ -46,7 +46,11 @@ module.exports = class BootstrapEnvironment extends NodeEnvironment {
     // await this.global.rpcServer.start();
     // await this.global.app.start();
 
-    await config.bootstrap.setup(this.global, getPort);
+    await config.bootstrap.setup({
+      globalObject: this.global,
+      getPort,
+      staticsUrl: project.servers.cdn.url(),
+    });
   }
 
   async teardown() {
@@ -55,6 +59,8 @@ module.exports = class BootstrapEnvironment extends NodeEnvironment {
     // await this.global.app.stop();
     // await this.global.rpcServer.stop();
 
-    await config.bootstrap.teardown(this.global);
+    await config.bootstrap.teardown({
+      globalObject: this.global,
+    });
   }
 };
